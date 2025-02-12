@@ -1,28 +1,34 @@
 #ifndef RPN_HPP
 #define RPN_HPP
 
-#include <string>
 #include <iostream>
-#include <exception>
+#include <cstring>
+#include <cstdlib>
+#include <cctype>
+#include <stdexcept>
 #include <stack>
-#include <algorithm>
-#include <sstream>
 
 class RPN {
     private:
         std::stack<int> Stack;
 
     public:
+        RPN();
+        RPN(std::string args);
+        RPN(RPN &rpn);
+        RPN &operator=(RPN &rpn);
+        ~RPN();
+
         bool empty(void);
         size_t size(void);
         int pop();
-        RPN();
-        ~RPN();
-        RPN &operator=(RPN &rpn);
-        RPN(RPN &rpn);
-        RPN(std::string args);
 
+        std::pair<int, int> popTwoOperands();
+        int performCalculation(int leftOperand, int rightOperand, char op);
+        void applyOperator(char op);
+        bool input_check(std::string &inp);
 
+        friend std::ostream &operator<<(std::ostream &os, RPN &rpn);
 };
 
 #endif
