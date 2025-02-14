@@ -1,32 +1,30 @@
-#ifndef BITCOINEXCHANGE_HPP
-#define BITCOINEXCHANGE_HPP
 
-#include <iostream>
-#include <fstream>
-#include <limits>
-#include <string>
-#include <stdexcept>
-#include <sstream>
-#include <cstdlib>
-#include <map>
+#ifndef BITCOINEXCHANGE_HPP
+# define BITCOINEXCHANGE_HPP
+# include <fstream>
+# include <map>
+# include <iostream>
+# include <cstdlib>
+# include <sstream>
 
 class BitcoinExchange
 {
+	private:
+		std::map<std::string, double>	_exchangeRate;
+
 	public:
 		BitcoinExchange();
-		BitcoinExchange(const BitcoinExchange &src);
-		BitcoinExchange &operator=(const BitcoinExchange &src);
+		BitcoinExchange(const BitcoinExchange& src);
 		~BitcoinExchange();
+		
+		BitcoinExchange&	operator=(const BitcoinExchange& rhs);
+		void				calculateValue(std::string inputLine);
+		bool				isValidDate(std::string date);
 
-		void loadBitcoinPrice(const std::string &filename);
-		double getExchangeRate(const std::string &date) const;
-		void processInput(const std::string &line);
-
-	private:
-		std::map<std::string, double> _bitcoinPrices;
-		bool isDateValid(const std::string &date);
-		bool isValueValid(const std::string &value);
-		static void trim(std::string &str);
+		class NoDatabaseException : public std::exception
+		{
+			const char*	what() const throw();
+		};
 };
 
 #endif

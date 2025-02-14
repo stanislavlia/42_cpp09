@@ -1,42 +1,37 @@
+#include <iostream>
+#include <fstream>
 #include "BitcoinExchange.hpp"
 
-int main(int argc, char **argv)
+int main(int ac, char **av)
 {
-	if(argc != 2)
+	if (ac == 2)
 	{
-		std::cerr << "Incorrent number of arguments!!!!!" << std::endl;
-		return 1;
-	}
-	try
-	{
-		BitcoinExchange btcExchange;
-		btcExchange.loadBitcoinPrice("data.csv");
-
-		std::ifstream inputFile(argv[1]);
-		if (!inputFile.is_open())
+		std::ifstream	file(av[1]);
+		if (!file.is_open())
+			std::cerr << "Error: could not open file." << std::endl;
+		else
 		{
-			std::cerr << "Error: Could not open file" << std::endl;
-			return 1;
+			try
+			{
+				BitcoinExchange btc;
+				std::string		line;
+				getline(file, line);
+				if (line != "date | value")
+				{
+					std::cerr << "Error: wrong input format." << std::endl;
+					return 0;
+				}
+				while (getline(file, line))
+					btc.calculateValue(line);
+				file.close();
+			}
+			catch (const std::exception& e)
+			{
+				std::cerr << e.what() << std::endl;
+			}
 		}
-
-		std::string line;
-		std::getline(inputFile, line);
-		if (line.empty() && inputFile.eof())
-		{
-			std::cerr << "Error: Empty file" << std::endl;
-			return 1;
-		}
-		while (std::getline(inputFile, line))
-		{
-			btcExchange.processInput(line);
-		}
-
-		inputFile.close();
 	}
-	catch (const std::exception &e)
-	{
-		std::cerr << e.what() << std::endl;
-		return 1;
-	}
+	else
+		std::cout << "Usage: ./btc [input_database]" << std::endl;
 	return 0;
 }
